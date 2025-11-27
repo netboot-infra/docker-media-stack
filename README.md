@@ -1,1 +1,1 @@
-# docker-deploy-media
+# Docker Media Stack

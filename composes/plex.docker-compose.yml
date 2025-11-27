@@ -1,0 +1,51 @@
+x-common-deploy: &common-deploy
+  restart_policy:
+    condition: on-failure
+    delay: 5s
+    window: 120s
+x-common-env: &common-env
+  PGID: 1000
+  PUID: 1000
+  TZ: Europe/Paris
+
+networks:
+  backend: {}
+  public:
+    external: true
+
+services:
+  plex:
+    cap_drop:
+      - "ALL"
+    deploy:
+      !!merge <<: *common-deploy
+      labels:
+        - "traefik.enable=true"
+        - "traefik.swarm.lbswarm=true"
+        - "traefik.http.routers.plex.rule=Host(`plex.$DOMAIN_NAME`)"
+        - "traefik.http.routers.plex.entrypoints=https"
+        - "traefik.http.routers.plex.middlewares=sablier-plex@swarm"
+        - "traefik.http.services.plex.loadbalancer.server.port=32400"
+    environment:
+      !!merge <<: *common-env
+      HOSTNAME: "MediaHost"
+    image: plexinc/pms-docker:1.42.2.10156-f737b826c
+    networks:
+      - home_net
+    ports:
+      - "32400:32400/tcp"
+      - "3005:3005/tcp"
+      - "8324:8324/tcp"
+      - "32469:32469/tcp"
+      - "1900:1900/udp"
+      - "32410:32410/udp"
+      - "32412:32412/udp"
+      - "32413:32413/udp"
+      - "32414:32414/udp"
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    user: "1000:1000"
+    volumes:
+      - $STORAGE_PATH/media/plex:/config
+      - $MEDIA_PATH:/mnt/media

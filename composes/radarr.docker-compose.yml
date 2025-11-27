@@ -28,7 +28,7 @@ services:
         - "traefik.http.routers.radarr.rule=Host(`radarr.netboot.fr`)"
         - "traefik.http.routers.radarr.entrypoints=https"
         - "traefik.http.services.radarr.loadbalancer.server.port=7878"
-        - "traefik.http.routers.radarr.middlewares=tinyauth"
+        - "traefik.http.routers.radarr.middlewares=auth-manager"
         # Homepage configuration
         - "homepage.group=Movie Management"
         - "homepage.name=Radarr Movies"

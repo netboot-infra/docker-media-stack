@@ -1,0 +1,48 @@
+x-common-deploy: &common-deploy
+  restart_policy:
+    condition: on-failure
+    delay: 5s
+    window: 120s
+x-common-env: &common-env
+  PGID: 1000
+  PUID: 1000
+  TZ: Europe/Paris
+
+networks:
+  backend: {}
+  public:
+    external: true
+
+services:
+  sonarr:
+    cap_add:
+      - SETUID
+      - SETGID
+    cap_drop:
+      - "ALL"
+    deploy:
+      !!merge <<: *common-deploy
+      labels:
+        # Traefik configuration
+        - "traefik.enable=true"
+        - "traefik.http.routers.sonarr.rule=Host(`sonarr.netboot.fr`)"
+        - "traefik.http.routers.sonarr.entrypoints=https"
+        - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
+        - "traefik.http.routers.sonarr.middlewares=auth-manager"
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2048M
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    environment:
+      !!merge <<: *common-env
+    image: lscr.io/linuxserver/sonarr:4.0.16
+    networks:
+      - public
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - $STORAGE_PATH/media/sonarr:/config
+      - $MEDIA_PATH:/mnt/media

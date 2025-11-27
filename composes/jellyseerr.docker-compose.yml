@@ -1,0 +1,56 @@
+x-common-deploy: &common-deploy
+  restart_policy:
+    condition: on-failure
+    delay: 5s
+    window: 120s
+x-common-env: &common-env
+  PGID: 1000
+  PUID: 1000
+  TZ: Europe/Paris
+
+networks:
+  backend: {}
+  public:
+    external: true
+
+services:
+  jellyseerr:
+    cap_drop:
+      - "ALL"
+    deploy:
+      !!merge <<: *common-deploy
+      labels:
+        # Traefik configuration
+        - "traefik.enable=true"
+        - "traefik.http.routers.jellyseerr.rule=Host(`jellyseerr.netboot.fr`)"
+        - "traefik.http.routers.jellyseerr.entrypoints=https"
+        - "traefik.http.services.jellyseerr.loadbalancer.server.port=5055"
+        - "traefik.http.routers.jellyseerr.middlewares=auth-manager"
+        # Homepage configuration
+        - "homepage.group=Media Requests"
+        - "homepage.name=Jellyseerr Requests"
+        - "homepage.icon=jellyseerr.png"
+        - "homepage.href=https://jellyseerr.$DOMAIN_NAME"
+        - "homepage.description=Allows you and others to request new movies and TV shows to be added to your Jellyfin media server."
+        - "homepage.weight=3"
+        - "homepage.widget.type=jellyseerr"
+        - "homepage.widget.url=http://jellyseerr:5055"
+        - "homepage.widget.key=$JELLYSEERR_API_KEY"
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2048M
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    environment:
+      !!merge <<: *common-env
+    image: ghcr.io/fallenbagel/jellyseerr:latest
+    networks:
+      - public
+    security_opt:
+      - no-new-privileges:true
+    user: "1000:1000"
+    volumes:
+      - $STORAGE_PATH/media/jellyseerr:/app/config
+      - $MEDIA_PATH:/mnt/media

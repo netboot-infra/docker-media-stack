@@ -37,7 +37,7 @@ services:
         - "homepage.description=Automates your movie downloads, finding and adding new releases to your collection as they become available."
         - "homepage.weight=1"
         - "homepage.widget.type=radarr"
-        - "homepage.widget.url=https://radarr.$DOMAIN_NAME"
+        - "homepage.widget.url=http://radarr:7878"
         - "homepage.widget.key=$RADARR_API_KEY"
       resources:
         limits:

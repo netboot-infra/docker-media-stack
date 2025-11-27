@@ -37,7 +37,7 @@ services:
         - "homepage.description=Manages your TV show downloads, automatically finding and adding new episodes as they air, keeping your library organized."
         - "homepage.weight=0"
         - "homepage.widget.type=sonarr"
-        - "homepage.widget.url=https://sonarr.$DOMAIN_NAME"
+        - "homepage.widget.url=http://sonarr:8989"
         - "homepage.widget.key=$SONARR_API_KEY"
       resources:
         limits:

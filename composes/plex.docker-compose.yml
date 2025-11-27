@@ -41,12 +41,23 @@ services:
     deploy:
       !!merge <<: *common-deploy
       labels:
+        # Autoheal 
+        - "autoheal=true"
+        # Traefik configuration
         - "traefik.enable=true"
-        - "traefik.swarm.lbswarm=true"
         - "traefik.http.routers.plex.rule=Host(`plex.$DOMAIN_NAME`)"
         - "traefik.http.routers.plex.entrypoints=https"
-        - "traefik.http.routers.plex.middlewares=sablier-plex@swarm"
         - "traefik.http.services.plex.loadbalancer.server.port=32400"
+        # Homepage configuration
+        - homepage.description=Stream your movies, TV shows, music, and photos to any device, providing a centralized media hub for all your content."
+        - homepage.group=Media Streaming"
+        - homepage.href=https://plex.$DOMAIN_NAME"
+        - homepage.icon=plex.png"
+        - homepage.name=Plex Media Server"
+        - homepage.weight=4"
+        - homepage.widget.key=none"
+        - homepage.widget.type=plex"
+        - homepage.widget.url=https://plex.$DOMAIN_NAME"
     environment:
       !!merge <<: *common-env
       HOSTNAME: "MediaHost"

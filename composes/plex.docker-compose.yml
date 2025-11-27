@@ -55,7 +55,7 @@ services:
         - homepage.icon=plex.png"
         - homepage.name=Plex Media Server"
         - homepage.weight=4"
-        - homepage.widget.key=none"
+        - homepage.widget.key=$PLEX_TOKEN"
         - homepage.widget.type=plex"
         - homepage.widget.url=https://plex.$DOMAIN_NAME"
     environment:

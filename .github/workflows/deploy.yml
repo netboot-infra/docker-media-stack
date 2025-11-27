@@ -47,6 +47,8 @@ jobs:
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           SUDO_PASSWORD: ${{ secrets.SUDO_PASSWORD }}
           DOCKER_HOST: "ssh://${{ vars.REMOTE_DOCKER_HOST }}:${{ vars.REMOTE_DOCKER_SSH_PORT }}"
+          # Plex variables
+          PLEX_TOKEN: ${{ secrets.PLEX_TOKEN }}
         run: |
           yq ea '. as $item ireduce ({}; . *+ $item)' composes/* | envsubst
 
@@ -59,5 +61,7 @@ jobs:
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           SUDO_PASSWORD: ${{ secrets.SUDO_PASSWORD }}
           DOCKER_HOST: "ssh://${{ vars.REMOTE_DOCKER_HOST }}:${{ vars.REMOTE_DOCKER_SSH_PORT }}"
+          # Plex variables
+          PLEX_TOKEN: ${{ secrets.PLEX_TOKEN }}
         run: |
           yq ea '. as $item ireduce ({}; . *+ $item)' composes/* | envsubst | docker stack deploy --compose-file - media

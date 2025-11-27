@@ -1,0 +1,58 @@
+x-common-deploy: &common-deploy
+  restart_policy:
+    condition: on-failure
+    delay: 5s
+    window: 120s
+x-common-env: &common-env
+  PGID: 1000
+  PUID: 1000
+  TZ: Europe/Paris
+
+networks:
+  backend: {}
+  public:
+    external: true
+
+services:
+  radarr:
+    cap_add:
+      - SETUID
+      - SETGID
+    cap_drop:
+      - "ALL"
+    deploy:
+      !!merge <<: *common-deploy
+      labels:
+        # Traefik configuration
+        - "traefik.enable=true"
+        - "traefik.http.routers.radarr.rule=Host(`radarr.netboot.fr`)"
+        - "traefik.http.routers.radarr.entrypoints=https"
+        - "traefik.http.services.radarr.loadbalancer.server.port=7878"
+        - "traefik.http.routers.radarr.middlewares=tinyauth"
+        # Homepage configuration
+        - "homepage.group=Movie Management"
+        - "homepage.name=Radarr Movies"
+        - "homepage.icon=radarr.png"
+        - "homepage.href=https://radarr.$DOMAIN_NAME"
+        - "homepage.description=Automates your movie downloads, finding and adding new releases to your collection as they become available."
+        - "homepage.weight=1"
+        - "homepage.widget.type=radarr"
+        - "homepage.widget.url=https://radarr.$DOMAIN_NAME"
+        - "homepage.widget.key=$RADARR_API_KEY"
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2048M
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    environment:
+      !!merge <<: *common-env
+    image: lscr.io/linuxserver/radarr:6.0.4
+    networks:
+      - public
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - $STORAGE_PATH/media/radarr:/config
+      - $MEDIA_PATH:/mnt/media

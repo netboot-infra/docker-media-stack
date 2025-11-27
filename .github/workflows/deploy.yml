@@ -47,8 +47,14 @@ jobs:
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           SUDO_PASSWORD: ${{ secrets.SUDO_PASSWORD }}
           DOCKER_HOST: "ssh://${{ vars.REMOTE_DOCKER_HOST }}:${{ vars.REMOTE_DOCKER_SSH_PORT }}"
-          # Plex variables
+          # Media variables
           PLEX_TOKEN: ${{ secrets.PLEX_TOKEN }}
+          BAZARR_API_KEY: ${{ secrets.BAZARR_API_KEY }}
+          RADARR_API_KEY: ${{ secrets.RADARR_API_KEY }}
+          SONARR_API_KEY: ${{ secrets.SONARR_API_KEY }}
+          JELLYSEERR_API_KEY: ${{ secrets.JELLYSEERR_API_KEY }}
+          PROWLARR_API_KEY: ${{ secrets.PROWLARR_API_KEY }}
+          JELLYFIN_API_KEY: ${{ secrets.JELLYFIN_API_KEY }}
         run: |
           yq ea '. as $item ireduce ({}; . *+ $item)' composes/* | envsubst
 
@@ -61,7 +67,13 @@ jobs:
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           SUDO_PASSWORD: ${{ secrets.SUDO_PASSWORD }}
           DOCKER_HOST: "ssh://${{ vars.REMOTE_DOCKER_HOST }}:${{ vars.REMOTE_DOCKER_SSH_PORT }}"
-          # Plex variables
+          # Media variables
           PLEX_TOKEN: ${{ secrets.PLEX_TOKEN }}
+          BAZARR_API_KEY: ${{ secrets.BAZARR_API_KEY }}
+          RADARR_API_KEY: ${{ secrets.RADARR_API_KEY }}
+          SONARR_API_KEY: ${{ secrets.SONARR_API_KEY }}
+          JELLYSEERR_API_KEY: ${{ secrets.JELLYSEERR_API_KEY }}
+          PROWLARR_API_KEY: ${{ secrets.PROWLARR_API_KEY }}
+          JELLYFIN_API_KEY: ${{ secrets.JELLYFIN_API_KEY }}
         run: |
           yq ea '. as $item ireduce ({}; . *+ $item)' composes/* | envsubst | docker stack deploy --compose-file - media

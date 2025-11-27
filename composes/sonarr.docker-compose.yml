@@ -25,10 +25,20 @@ services:
       labels:
         # Traefik configuration
         - "traefik.enable=true"
-        - "traefik.http.routers.sonarr.rule=Host(`sonarr.netboot.fr`)"
+        - "traefik.http.routers.sonarr.rule=Host(`sonarr.$DOMAIN_NAME`)"
         - "traefik.http.routers.sonarr.entrypoints=https"
         - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
         - "traefik.http.routers.sonarr.middlewares=auth-manager"
+        # Homepage configuration
+        - "homepage.group=TV Management"
+        - "homepage.name=Sonarr TV"
+        - "homepage.icon=sonarr.png"
+        - "homepage.href=https://sonarr.$DOMAIN_NAME"
+        - "homepage.description=Manages your TV show downloads, automatically finding and adding new episodes as they air, keeping your library organized."
+        - "homepage.weight=0"
+        - "homepage.widget.type=sonarr"
+        - "homepage.widget.url=https://sonarr.$DOMAIN_NAME"
+        - "homepage.widget.key=$SONARR_API_KEY"
       resources:
         limits:
           cpus: '1.0'

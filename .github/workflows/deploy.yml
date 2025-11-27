@@ -43,7 +43,7 @@ jobs:
           # Global variables
           DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
           STORAGE_PATH: ${{ vars.STORAGE_PATH }}
-          BACKUP_PATH: ${{ vars.BACKUP_PATH }}
+          MEDIA_PATH: ${{ vars.MEDIA_PATH }}
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           SUDO_PASSWORD: ${{ secrets.SUDO_PASSWORD }}
           DOCKER_HOST: "ssh://${{ vars.REMOTE_DOCKER_HOST }}:${{ vars.REMOTE_DOCKER_SSH_PORT }}"
@@ -55,7 +55,7 @@ jobs:
           # Global variables
           DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
           STORAGE_PATH: ${{ vars.STORAGE_PATH }}
-          BACKUP_PATH: ${{ vars.BACKUP_PATH }}
+          MEDIA_PATH: ${{ vars.MEDIA_PATH }}
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           SUDO_PASSWORD: ${{ secrets.SUDO_PASSWORD }}
           DOCKER_HOST: "ssh://${{ vars.REMOTE_DOCKER_HOST }}:${{ vars.REMOTE_DOCKER_SSH_PORT }}"

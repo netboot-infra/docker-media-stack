@@ -1,0 +1,49 @@
+x-common-deploy: &common-deploy
+  restart_policy:
+    condition: on-failure
+    delay: 5s
+    window: 120s
+x-common-env: &common-env
+  PGID: 1000
+  PUID: 1000
+  TZ: Europe/Paris
+
+networks:
+  backend: {}
+  public:
+    external: true
+
+services:
+  jellyfin:
+    cap_drop:
+      - "ALL"
+    deploy:
+      !!merge <<: *common-deploy
+      labels:
+        # Traefik configuration
+        - "traefik.enable=true"
+        - "traefik.http.routers.Jellyfin.rule=Host(`Jellyfin.netboot.fr`)"
+        - "traefik.http.routers.Jellyfin.entrypoints=https"
+        - "traefik.http.services.Jellyfin.loadbalancer.server.port=8096"
+        - "traefik.http.routers.Jellyfin.middlewares=auth-manager"
+        # Homepage configuration
+        - "homepage.group=Media Streaming"
+        - "homepage.name=Jellyfin Media Server"
+        - "homepage.icon=jellyfin.png"
+        - "homepage.href=https://jellyfin.$DOMAIN_NAME"
+        - "homepage.description=Organize and stream your movies, TV shows, and music to any device, creating your own personal media center."
+        - "homepage.weight=3"
+        - "homepage.widget.type=jellyfin"
+        - "homepage.widget.url=http://jellyfin:8096"
+        - "homepage.widget.key=$JELLYFIN_API_KEY"
+    environment:
+      !!merge <<: *common-env
+    image: jellyfin/jellyfin:latest
+    networks:
+      - public
+    security_opt:
+      - no-new-privileges:true
+    user: "1000:1000"
+    volumes:
+      - $STORAGE_PATH/media/jellyfin:/config
+      - $MEDIA_PATH:/media

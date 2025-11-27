@@ -49,3 +49,6 @@ services:
     volumes:
       - $STORAGE_PATH/media/plex:/config
       - $MEDIA_PATH:/mnt/media
+    tmpfs:
+      - /var/run/s6:rw,uid=1000,gid=1000
+      

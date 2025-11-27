@@ -4,8 +4,8 @@ x-common-deploy: &common-deploy
     delay: 5s
     window: 120s
 x-common-env: &common-env
-  PGID: 1000
-  PUID: 1000
+  PLEX_GID: 1000
+  PLEX_UID: 1000
   TZ: Europe/Paris
 
 networks:
@@ -15,8 +15,29 @@ networks:
 
 services:
   plex:
+    # Linux capabilities configuration:
+    # We start by dropping ALL capabilities to improve container security.
+    # Then we add back only the minimal set required for Plex to function properly.
+    # These capabilities allow Plex to:
+    # - access and manage files (CHOWN, DAC_OVERRIDE, FOWNER)
+    # - run as a non-root user (SETUID, SETGID)
+    # - open required network ports (NET_BIND_SERVICE)
+    # - manage internal processes (KILL)
+    # - write audit logs (AUDIT_WRITE)
+    # - support certain transcoding/debug operations (SYS_PTRACE)
+    # Removing any of these may cause Plex to fail to start or operate correctly.
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+      - SETUID
+      - SETGID
+      - NET_BIND_SERVICE
+      - KILL
+      - AUDIT_WRITE
+      - SYS_PTRACE
     cap_drop:
-      - "ALL"
+      - ALL
     deploy:
       !!merge <<: *common-deploy
       labels:
@@ -42,13 +63,8 @@ services:
       - "32412:32412/udp"
       - "32413:32413/udp"
       - "32414:32414/udp"
-    read_only: true
     security_opt:
       - no-new-privileges:true
-    user: "1000:1000"
     volumes:
       - $STORAGE_PATH/media/plex:/config
       - $MEDIA_PATH:/mnt/media
-    tmpfs:
-      - /var/run/s6:rw,uid=1000,gid=1000
-      

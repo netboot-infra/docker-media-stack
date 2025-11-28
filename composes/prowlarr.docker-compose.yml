@@ -1,0 +1,59 @@
+x-common-deploy: &common-deploy
+  restart_policy:
+    condition: on-failure
+    delay: 5s
+    window: 120s
+x-common-env: &common-env
+  PGID: 1000
+  PUID: 1000
+  TZ: Europe/Paris
+
+networks:
+  backend: {}
+  public:
+    external: true
+  vpn:
+    external: true
+
+services:
+  prowlarr:
+    cap_drop:
+      - "ALL"
+    deploy:
+      !!merge <<: *common-deploy
+      labels:
+        # Traefik configuration
+        - "traefik.enable=true"
+        - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.netboot.fr`)"
+        - "traefik.http.routers.prowlarr.entrypoints=https"
+        - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
+        - "traefik.http.routers.prowlarr.middlewares=auth-manager"
+        # Homepage configuration
+        - "homepage.group=Indexers"
+        - "homepage.name=Prowlarr"
+        - "homepage.icon=prowlarr.png"
+        - "homepage.href=https://prowlarr.$DOMAIN_NAME"
+        - "homepage.description=An indexer manager/proxy for your Usenet and Torrent downloaders, integrating with PVR apps like Sonarr and Radarr."
+        - "homepage.weight=1"
+        - "homepage.widget.type=prowlarr"
+        - "homepage.widget.url=http://prowlarr:9696"
+        - "homepage.widget.key=$PROWLARR_API_KEY"
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2048M
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    environment:
+      !!merge <<: *common-env
+    image: ghcr.io/linuxserver/prowlarr:latest
+    networks:
+      - public
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    user: "1000:1000"
+    volumes:
+      - $STORAGE_PATH/media/prowlarr:/config
+      - $MEDIA_PATH:/mnt/media

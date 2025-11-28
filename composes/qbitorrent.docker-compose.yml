@@ -1,0 +1,59 @@
+x-common-deploy: &common-deploy
+  restart_policy:
+    condition: on-failure
+    delay: 5s
+    window: 120s
+x-common-env: &common-env
+  PGID: 1000
+  PUID: 1000
+  TZ: Europe/Paris
+
+networks:
+  backend: {}
+  public:
+    external: true
+  vpn:
+    external: true
+
+services:
+  qbittorrent:
+    cap_drop:
+      - "ALL"
+    deploy:
+      !!merge <<: *common-deploy
+      labels:
+        # Traefik configuration
+        - "traefik.enable=true"
+        - "traefik.http.routers.torrent.rule=Host(`torrent.netboot.fr`)"
+        - "traefik.http.routers.torrent.entrypoints=https"
+        - "traefik.http.services.torrent.loadbalancer.server.port=8080"
+        - "traefik.http.routers.torrent.middlewares=auth-manager"
+        # Homepage configuration
+        - "homepage.group=Download Clients"
+        - "homepage.name=qBittorrent Downloader"
+        - "homepage.icon=qbittorrent.png"
+        - "homepage.href=https://torrent.$DOMAIN_NAME"
+        - "homepage.description=A user-friendly torrent client for downloading and managing files via BitTorrent, offering a clean interface and powerful features."
+        - "homepage.weight=2"
+        - "homepage.widget.type=qbittorrent"
+        - "homepage.widget.url=http://torrent:8080"
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 3G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
+    environment:
+      !!merge <<: *common-env
+    image: lscr.io/linuxserver/qbittorrent:5.1.4
+    networks:
+      - public
+      - vpn
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    user: "1000:1000"
+    volumes:
+      - $STORAGE_PATH/media/qbittorrent:/config
+      - $MEDIA_PATH:/mnt/media

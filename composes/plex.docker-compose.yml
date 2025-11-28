@@ -57,7 +57,7 @@ services:
         - "homepage.weight=4"
         - "homepage.widget.key=$PLEX_TOKEN"
         - "homepage.widget.type=plex"
-        - "homepage.widget.url=http://plex:32400"
+        - "homepage.widget.url=http://media_plex:32400"
     environment:
       !!merge <<: *common-env
       HOSTNAME: "MediaHost"

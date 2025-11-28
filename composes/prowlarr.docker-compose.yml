@@ -39,7 +39,7 @@ services:
         - "homepage.description=An indexer manager/proxy for your Usenet and Torrent downloaders, integrating with PVR apps like Sonarr and Radarr."
         - "homepage.weight=1"
         - "homepage.widget.type=prowlarr"
-        - "homepage.widget.url=http://prowlarr:9696"
+        - "homepage.widget.url=http://media_prowlarr:9696"
         - "homepage.widget.key=$PROWLARR_API_KEY"
       resources:
         limits:

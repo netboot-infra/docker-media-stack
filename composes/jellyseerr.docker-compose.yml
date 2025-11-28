@@ -34,7 +34,7 @@ services:
         - "homepage.description=Allows you and others to request new movies and TV shows to be added to your Jellyfin media server."
         - "homepage.weight=3"
         - "homepage.widget.type=jellyseerr"
-        - "homepage.widget.url=http://jellyseerr:5055"
+        - "homepage.widget.url=http://media_jellyseerr:5055"
         - "homepage.widget.key=$JELLYSEERR_API_KEY"
       resources:
         limits:

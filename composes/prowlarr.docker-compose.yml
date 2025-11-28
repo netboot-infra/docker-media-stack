@@ -17,6 +17,9 @@ networks:
 
 services:
   prowlarr:
+    cap_add:
+      - SETUID
+      - SETGID
     cap_drop:
       - "ALL"
     deploy:
@@ -50,10 +53,8 @@ services:
     image: ghcr.io/linuxserver/prowlarr:latest
     networks:
       - public
-    read_only: true
     security_opt:
       - no-new-privileges:true
-    user: "1000:1000"
     volumes:
       - $STORAGE_PATH/media/prowlarr:/config
       - $MEDIA_PATH:/mnt/media

@@ -25,7 +25,6 @@ services:
         - "traefik.http.routers.Jellyfin.rule=Host(`Jellyfin.netboot.fr`)"
         - "traefik.http.routers.Jellyfin.entrypoints=https"
         - "traefik.http.services.Jellyfin.loadbalancer.server.port=8096"
-        - "traefik.http.routers.Jellyfin.middlewares=auth-manager"
         # Homepage configuration
         - "homepage.group=Media Streaming"
         - "homepage.name=Jellyfin Media Server"
